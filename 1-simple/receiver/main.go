@@ -26,9 +26,9 @@ func main() {
 	var forever chan struct{}
 	go func() {
 		for msg := range messages {
-			log.Printf("Received message: %s", string(msg.Payload))
-			log.Printf("Message Id: %s", msg.UUID)
+			log.Printf("Received message: %s with UUID: %s", string(msg.Payload), msg.UUID)
 			msg.Ack()
+			log.Printf("Acked message")
 		}
 	}()
 	<-forever

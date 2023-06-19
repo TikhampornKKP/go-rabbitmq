@@ -1,2 +1,6 @@
 simple rabbitmq
 Just send one string to one receiver
+
+New when using "watermill-amqp"
+- If the receiver died, the message won't lost and process when the receiver comes back
+- Fairly share incoming message

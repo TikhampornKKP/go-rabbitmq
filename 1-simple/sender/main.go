@@ -18,7 +18,7 @@ func main() {
 	defer commandPublisher.Close()
 
 	// Publish a message
-	msg := message.NewMessage(watermill.NewUUID(), []byte("xxxxyyyyy444"))
+	msg := message.NewMessage(watermill.NewUUID(), []byte("uJam Jam Jam 888"))
 	if err := commandPublisher.Publish("my_topic", msg); err != nil {
 		log.Fatalf("Failed to publish message: %s", err)
 	} else {
