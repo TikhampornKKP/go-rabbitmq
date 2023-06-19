@@ -1,0 +1,2 @@
+simple rabbitmq
+Just send one string to one receiver

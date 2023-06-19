@@ -1,0 +1,3 @@
+Distributing tasks among workers (the competing consumers pattern)
+- Make sure that the queue won't be lost (when one of the receivers died)
+- When the rabbit server died, the message my not lost
