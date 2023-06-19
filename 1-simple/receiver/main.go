@@ -1,73 +1,35 @@
 package main
 
 import (
-	"bytes"
+	simple "TikhampornSky/rabbitmq/1-simple"
+	"context"
 	"log"
-	"time"
 
-	amqp "github.com/rabbitmq/amqp091-go"
+	wtmAmqp "github.com/ThreeDotsLabs/watermill-amqp/v2/pkg/amqp"
 )
 
-func failOnError(err error, msg string) {
-	if err != nil {
-		log.Panicf("%s: %s", msg, err)
-	}
-}
-
 func main() {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
-	failOnError(err, "Failed to connect to RabbitMQ")
-	defer conn.Close()
+	// Create an AMQP connection
+	commandSubscriber, err := wtmAmqp.NewSubscriber(simple.AmqpConfig, simple.Logger)
+	if err != nil {
+		log.Panic("Cannot initialize subscriber", err)
+	}
+	defer commandSubscriber.Close()
 
-	ch, err := conn.Channel()
-	failOnError(err, "Failed to open a channel")
-	defer ch.Close()
+	// Start consuming messages
+	messages, err := commandSubscriber.Subscribe(context.Background(), "my_topic")
+	if err != nil {
+		log.Fatalf("Failed to subscribe to topic: %s", err)
+	}
 
-	q, err := ch.QueueDeclare(
-		"hello", // name
-		false,   // durable
-		false,   // delete when unused
-		false,   // exclusive
-		false,   // no-wait
-		nil,     // arguments
-	)
-	// Note that we declare the queue here, as well. Because we might start the consumer before the publisher, we want to make sure the queue exists before we try to consume messages from it.
-
-	failOnError(err, "Failed to declare a queue")
-
-	err = ch.Qos(
-		1,     // prefetch count
-		0,     // prefetch size
-		false, // global
-	)
-	failOnError(err, "Failed to set QoS")
-
-	msgs, err := ch.Consume(
-		q.Name, // queue
-		"",     // consumer
-		false,  // auto-ack
-		false,  // exclusive
-		false,  // no-local
-		false,  // no-wait
-		nil,    // args
-	)
-	failOnError(err, "Failed to register a consumer")
-
+	// Handle received messages
 	var forever chan struct{}
-
 	go func() {
-		for d := range msgs {
-			log.Printf("Received a message: %s", d.Body)
-			dotCount := bytes.Count(d.Body, []byte("."))
-			t := time.Duration(dotCount)
-			time.Sleep(t * time.Second)
-			log.Printf("Done")
-			d.Ack(false)
+		for msg := range messages {
+			log.Printf("Received message: %s", string(msg.Payload))
+			log.Printf("Message Id: %s", msg.UUID)
+			msg.Ack()
 		}
 	}()
-
-	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
 	<-forever
 }
-
-// Don't forget to start rabbitmq: brew services start rabbitmq

@@ -1,50 +1,27 @@
 package main
 
 import (
-	"context"
+	simple "TikhampornSky/rabbitmq/1-simple"
 	"log"
-	"time"
 
-	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/ThreeDotsLabs/watermill"
+	wtmAmqp "github.com/ThreeDotsLabs/watermill-amqp/v2/pkg/amqp"
+	"github.com/ThreeDotsLabs/watermill/message"
 )
 
-func failOnError(err error, msg string) {
-	if err != nil {
-		log.Panicf("%s: %s", msg, err)
-	}
-}
-
 func main() {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
-	failOnError(err, "Failed to connect to RabbitMQ")
-	defer conn.Close()
+	// Create an AMQP connection
+	commandPublisher, err := wtmAmqp.NewPublisher(simple.AmqpConfig, simple.Logger)
+	if err != nil {
+		log.Panic("Cannot initialize command publisher", err)
+	}
+	defer commandPublisher.Close()
 
-	ch, err := conn.Channel()
-	failOnError(err, "Failed to open a channel")
-	defer ch.Close()
-
-	q, err := ch.QueueDeclare(
-		"hello", // name
-		false,   // durable
-		false,   // delete when unused
-		false,   // exclusive
-		false,   // no-wait
-		nil,     // arguments
-	)
-	failOnError(err, "Failed to declare a queue")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	body := "Hello World2!"
-	err = ch.PublishWithContext(ctx,
-		"",     // exchange
-		q.Name, // routing key
-		false,  // mandatory
-		false,  // immediate
-		amqp.Publishing{
-			ContentType: "text/plain",
-			Body:        []byte(body),
-		})
-	failOnError(err, "Failed to publish a message")
-	log.Printf(" [x] Sent %s\n", body)
+	// Publish a message
+	msg := message.NewMessage(watermill.NewUUID(), []byte("xxxxyyyyy444"))
+	if err := commandPublisher.Publish("my_topic", msg); err != nil {
+		log.Fatalf("Failed to publish message: %s", err)
+	} else {
+		log.Printf("Published message: %s", msg.UUID)
+	}
 }
