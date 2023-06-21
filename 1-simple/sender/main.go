@@ -18,8 +18,10 @@ func main() {
 	defer commandPublisher.Close()
 
 	// Publish a message
-	msg := message.NewMessage(watermill.NewUUID(), []byte("Hello1234"))
-	if err := commandPublisher.Publish("my_topic", msg); err != nil {
+	msg := message.NewMessage(watermill.NewUUID(), []byte("Test1234"))
+	msg.Metadata.Set("x-delay", "5000")
+
+	if err := commandPublisher.Publish("my-exchange", msg); err != nil {
 		log.Fatalf("Failed to publish message: %s", err)
 	} else {
 		log.Printf("Published message: %s", msg.UUID)

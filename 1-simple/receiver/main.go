@@ -17,7 +17,7 @@ func main() {
 	defer commandSubscriber.Close()
 
 	// Start consuming messages
-	messages, err := commandSubscriber.Subscribe(context.Background(), "my_topic")
+	messages, err := commandSubscriber.Subscribe(context.Background(), "my-queue")
 	if err != nil {
 		log.Fatalf("Failed to subscribe to topic: %s", err)
 	}
