@@ -17,11 +17,16 @@ func main() {
 	}
 	defer commandPublisher.Close()
 
+	// Mock Data
+	const myMockTime = "10:30"
+	var myTopic = "my-exchange&" + myMockTime
+	// ================================
+
 	// Publish a message
-	msg := message.NewMessage(watermill.NewUUID(), []byte("Test1234"))
+	msg := message.NewMessage(watermill.NewUUID(), []byte("This mock message is from "+myMockTime))
 	msg.Metadata.Set("x-delay", "5000")
 
-	if err := commandPublisher.Publish("my-exchange", msg); err != nil {
+	if err := commandPublisher.Publish(myTopic, msg); err != nil {
 		log.Fatalf("Failed to publish message: %s", err)
 	} else {
 		log.Printf("Published message: %s", msg.UUID)
