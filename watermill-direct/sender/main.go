@@ -1,7 +1,7 @@
 package main
 
 import (
-	simple "TikhampornSky/rabbitmq/1-simple"
+	simple "TikhampornSky/rabbitmq/watermill-direct"
 	"log"
 
 	"github.com/ThreeDotsLabs/watermill"
