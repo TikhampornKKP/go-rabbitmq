@@ -1,9 +1,0 @@
-Sending messages to many consumers at once
-
-- Exchange Types: direct, topic, headers and fanout (we'll focus on the last one)
-- fanout = broadcasts all the messages it receives to all the queues it knows
-
-===================================================
-- We want to hear about all log messages, not just a subset of them. We're also interested only in currently flowing messages not in the old ones. To solve that we need two things.
-1. Whenever we connect to Rabbit we need a fresh, empty queue. To do this we could create a queue with a random name, or, even better - let the server choose a random queue name for us.
-2. Once we disconnect the consumer the queue should be automatically deleted.

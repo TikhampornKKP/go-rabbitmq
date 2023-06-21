@@ -1,8 +1,6 @@
 package simple
 
 import (
-	"strings"
-
 	"github.com/ThreeDotsLabs/watermill"
 	wamqp "github.com/ThreeDotsLabs/watermill-amqp/v2/pkg/amqp"
 	"github.com/rabbitmq/amqp091-go"
@@ -33,17 +31,17 @@ var (
 		},
 		QueueBind: wamqp.QueueBindConfig{
 			GenerateRoutingKey: func(topic string) string {
-				return "special-key"
+				return ""
 			},
 		},
 		Publish: wamqp.PublishConfig{
 			GenerateRoutingKey: func(topic string) string {
-				parts := strings.Split(topic, "&")
-				time := parts[1]
-				if IsTimeClose(time) {
-					return "special-key"
-				}
-				return "ignore"
+				// parts := strings.Split(topic, "&")
+				// time := parts[1]
+				// if IsTimeClose(time) {
+				// 	return "special-key"
+				// }
+				return ""
 			},
 		},
 		Consume: wamqp.ConsumeConfig{

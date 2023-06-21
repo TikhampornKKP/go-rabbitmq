@@ -1,9 +1,0 @@
-Receiving messages based on a pattern (topics) --> "Topic Exchange"
-
-In our logging system we might want to subscribe to not only logs based on severity, but also based on the source which emitted the log. 
-You might know this concept from the syslog unix tool, which routes logs based on both severity (info/warn/crit...) and facility (auth/cron/kern...).
-
-The logic behind the topic exchange is similar to a direct one - a message sent with a particular routing key will be delivered to all the queues 
-that are bound with a matching binding key. However there are two important special cases for binding keys:
-    * (star) can substitute for exactly one word.    - the topic exchange will behave just like a direct one.
-    # (hash) can substitute for zero or more words.  - it will receive all the messages, regardless of the routing key - like in fanout exchange.
