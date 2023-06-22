@@ -17,18 +17,25 @@ func main() {
 	}
 	defer commandPublisher.Close()
 
-	// Mock Data
-	const myMockTime = "15:30"
-	var myTopic = "my-exchange&" + myMockTime
-	// ================================
+	const myMockTime = "11:30"
+	var mockTopic = "my-exchange"
 
 	// Publish a message
 	msg := message.NewMessage(watermill.NewUUID(), []byte("This mock message is from "+myMockTime))
-	msg.Metadata.Set("x-delay", "5000")
-
-	if err := commandPublisher.Publish(myTopic, msg); err != nil {
-		log.Fatalf("Failed to publish message: %s", err)
+	if simple.IsTimeClose(myMockTime) {
+		log.Println("Time is close")
+		msg.Metadata.Set("x-delay", "5000")
 	} else {
-		log.Printf("Published message: %s", msg.UUID)
+		log.Println("Time is not close")
+	}
+
+	if mockTopic == simple.AcceptedTopic {
+		if err := commandPublisher.Publish(mockTopic, msg); err != nil {
+			log.Fatalf("Failed to publish message: %s", err)
+		} else {
+			log.Printf("Published message: %s", msg.UUID)
+		}
+	} else {
+		log.Println("Topic is not matched, do something else")
 	}
 }

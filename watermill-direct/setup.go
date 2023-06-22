@@ -36,11 +36,6 @@ var (
 		},
 		Publish: wamqp.PublishConfig{
 			GenerateRoutingKey: func(topic string) string {
-				// parts := strings.Split(topic, "&")
-				// time := parts[1]
-				// if IsTimeClose(time) {
-				// 	return "special-key"
-				// }
 				return ""
 			},
 		},
