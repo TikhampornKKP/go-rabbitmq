@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// Create an AMQP connection
-	commandSubscriber, err := wtmAmqp.NewSubscriber(simple.AmqpConfig, simple.Logger)
+	commandSubscriber, err := wtmAmqp.NewSubscriber(simple.AmqpConfigOld, simple.Logger)
 	if err != nil {
 		log.Panic("Cannot initialize subscriber", err)
 	}
@@ -26,7 +26,7 @@ func main() {
 	var forever chan struct{}
 	go func() {
 		for msg := range messages {
-			log.Printf("Received message: %s with UUID: %s", string(msg.Payload), msg.UUID)
+			log.Printf("--> Received message: %s with UUID: %s", string(msg.Payload), msg.UUID)
 			msg.Ack()
 			log.Printf("Acked message")
 		}
