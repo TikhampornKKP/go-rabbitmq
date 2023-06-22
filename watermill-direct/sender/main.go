@@ -18,7 +18,7 @@ func main() {
 	defer commandPublisher.Close()
 
 	// Mock Data
-	const myMockTime = "9:30"
+	const myMockTime = "15:30"
 	var myTopic = "my-exchange&" + myMockTime
 	// ================================
 
