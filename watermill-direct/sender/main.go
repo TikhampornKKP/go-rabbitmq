@@ -3,6 +3,7 @@ package main
 import (
 	simple "TikhampornSky/rabbitmq/watermill-direct"
 	"log"
+	"time"
 
 	"github.com/ThreeDotsLabs/watermill"
 	wtmAmqp "github.com/ThreeDotsLabs/watermill-amqp/v2/pkg/amqp"
@@ -17,11 +18,11 @@ func main() {
 	}
 	defer commandPublisher.Close()
 
-	const myMockTime = "11:30"
+	var myMockTime = time.Now().Add(time.Duration(10) * time.Hour)
 	var mockTopic = "my-exchange"
 
 	// Publish a message
-	msg := message.NewMessage(watermill.NewUUID(), []byte("This mock message is from "+myMockTime))
+	msg := message.NewMessage(watermill.NewUUID(), []byte("This mock message is from "+myMockTime.String()))
 	if simple.IsTimeClose(myMockTime) {
 		log.Println("Time is close")
 		msg.Metadata.Set("x-delay", "5000")

@@ -1,29 +1,32 @@
 package simple
 
+import (
+	"log"
+	"time"
+)
+
 type TimeRange struct {
 	Start string
 	End   string
 }
 
 var (
-	TimeClose = []TimeRange{
-		{
-			Start: "22:00",
-			End:   "06:00",
-		},
-	}
-
 	AcceptedTopic = "my-exchange"
+	now           = time.Now()
+	StartTime     = time.Date(now.Year(), now.Month(), now.Day(), 22, 0, 0, 0, now.Location())
+	EndTime       = time.Date(now.Year(), now.Month(), now.Day(), 6, 0, 0, 0, now.Location())
 )
 
-func IsTimeClose(time string) bool {
-	for _, tr := range TimeClose {
-		if tr.Start <= tr.End && tr.Start <= time && time <= tr.End {
-			return true
-		}
-		if tr.Start > tr.End && (tr.Start <= time || time <= tr.End) {
-			return true
-		}
+func IsTimeClose(now time.Time) bool {
+	if EndTime.Before(StartTime) {
+		EndTime = EndTime.Add(24 * time.Hour)
 	}
+
+	if now.After(StartTime) && now.Before(EndTime) {
+		log.Println("Current time is within the interval of 22:00 to 06:00")
+		return true
+	}
+
+	log.Println("Current time is outside the interval of 22:00 to 06:00")
 	return false
 }
