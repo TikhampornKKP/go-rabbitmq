@@ -22,7 +22,7 @@ var (
 		},
 		Queue: wamqp.QueueConfig{
 			GenerateName: func(topic string) string {
-				return "my-queue"
+				return topic
 			},
 			Durable: true,
 		},
